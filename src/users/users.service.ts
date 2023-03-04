@@ -23,11 +23,7 @@ export class UsersService {
     return this.userReporitory.save(newUser);
   }
 
-  async updateOne(id: number, payload: UpdateUserParams) {
-    return this.userReporitory.update({ id }, { ...payload });
-  }
-
-  async deleteUser(id: number) {
+  async deleteUser(id: string) {
     return this.userReporitory.delete({ id });
   }
 }
