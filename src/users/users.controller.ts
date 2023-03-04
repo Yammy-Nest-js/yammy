@@ -26,10 +26,9 @@ export class UsersController {
   async findOneUser() {
     return 'find one user';
   }
-
+  // * 회원가입
   @Post()
   async signup(@Body() userCreateDto: userCreateDto) {
-    console.log('🐶body', userCreateDto);
     return await this.usersService.create(userCreateDto);
   }
 
@@ -41,6 +40,7 @@ export class UsersController {
     return this.usersService.updateOne(id, userUpdateDto);
   }
 
+  // * 회원탈퇴
   @Delete(':id')
   deleteUser(@Param('id', ParseIntPipe) id: number) {
     return this.usersService.deleteUser(id);
