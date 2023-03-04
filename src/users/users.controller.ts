@@ -1,12 +1,4 @@
-import {
-  Body,
-  Controller,
-  Delete,
-  Get,
-  Param,
-  ParseIntPipe,
-  Post,
-} from '@nestjs/common';
+import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { userSignupDto } from './dto/users.signup.dto';
 
@@ -26,12 +18,12 @@ export class UsersController {
   // * 회원가입
   @Post()
   async signup(@Body() userSignupDto: userSignupDto) {
-    return await this.usersService.create(userSignupDto);
+    return await this.usersService.signup(userSignupDto);
   }
 
   // * 회원탈퇴
   @Delete(':id')
-  deleteUser(@Param('id') id: string) {
+  async deleteUser(@Param('id') id: string) {
     return this.usersService.deleteUser(id);
   }
 }

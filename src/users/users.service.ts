@@ -1,29 +1,20 @@
+import { UsersRepository } from './users.repository';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserParams, UpdateUserParams } from 'src/utils/types';
-import { Repository } from 'typeorm';
-import { User } from './user.entity';
+import { CreateUserParams } from 'src/utils/types';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectRepository(User) private userReporitory: Repository<User>,
-  ) {}
+  constructor(private readonly usersRepository: UsersRepository) {}
 
   async findUsers() {
-    return this.userReporitory.find();
+    return this.usersRepository.find();
   }
 
-  async create(userDetails: CreateUserParams): Promise<any> {
-    const newUser = this.userReporitory.create({
-      ...userDetails,
-      createdAt: new Date(),
-    });
-
-    return this.userReporitory.save(newUser);
+  async signup(userDetails: CreateUserParams): Promise<any> {
+    return await this.usersRepository.create(userDetails);
   }
 
   async deleteUser(id: string) {
-    return this.userReporitory.delete({ id });
+    return await this.usersRepository.delete(id);
   }
 }
