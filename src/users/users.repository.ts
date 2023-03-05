@@ -6,24 +6,22 @@ import { User } from './user.entity';
 
 @Injectable()
 export class UsersRepository {
-  constructor(
-    @InjectRepository(User) private userReporitory: Repository<User>,
-  ) {}
+  constructor(@InjectRepository(User) private userEntity: Repository<User>) {}
 
   async find() {
-    return this.userReporitory.find();
+    return this.userEntity.find();
   }
 
   async create(userDetails: CreateUserParams): Promise<any> {
-    const newUser = this.userReporitory.create({
+    const newUser = this.userEntity.create({
       ...userDetails,
       createdAt: new Date(),
     });
 
-    await this.userReporitory.save(newUser);
+    await this.userEntity.save(newUser);
   }
 
   async delete(id: string) {
-    return await this.userReporitory.delete({ id });
+    return await this.userEntity.delete({ id });
   }
 }
