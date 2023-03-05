@@ -1,6 +1,7 @@
 import { UsersRepository } from './users.repository';
 import { Injectable } from '@nestjs/common';
 import { CreateUserParams } from 'src/utils/types';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
@@ -11,7 +12,20 @@ export class UsersService {
   }
 
   async signup(userDetails: CreateUserParams): Promise<any> {
-    return await this.usersRepository.create(userDetails);
+    // * 비밀번호 암호화
+    const hash = async (plainText: string): Promise<string> => {
+      const saltOrRounds = 10;
+      return await bcrypt.hash(plainText, saltOrRounds);
+    };
+
+    const hashedPw = await hash(userDetails.password);
+
+    const hashedPwSignupInfo = {
+      ...userDetails,
+      password: hashedPw,
+    };
+
+    return await this.usersRepository.create(hashedPwSignupInfo);
   }
 
   async deleteUser(id: string) {
