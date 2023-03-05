@@ -1,33 +1,34 @@
+import { UsersRepository } from './users.repository';
 import { Injectable } from '@nestjs/common';
-import { InjectRepository } from '@nestjs/typeorm';
-import { CreateUserParams, UpdateUserParams } from 'src/utils/types';
-import { Repository } from 'typeorm';
-import { User } from './user.entity';
+import { CreateUserParams } from 'src/utils/types';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class UsersService {
-  constructor(
-    @InjectRepository(User) private userReporitory: Repository<User>,
-  ) {}
+  constructor(private readonly usersRepository: UsersRepository) {}
 
   async findUsers() {
-    return this.userReporitory.find();
+    return this.usersRepository.find();
   }
 
-  async create(userDetails: CreateUserParams): Promise<any> {
-    const newUser = this.userReporitory.create({
+  async signup(userDetails: CreateUserParams): Promise<any> {
+    // * 비밀번호 암호화
+    const hash = async (plainText: string): Promise<string> => {
+      const saltOrRounds = 10;
+      return await bcrypt.hash(plainText, saltOrRounds);
+    };
+
+    const hashedPw = await hash(userDetails.password);
+
+    const hashedPwSignupInfo = {
       ...userDetails,
-      createdAt: new Date(),
-    });
+      password: hashedPw,
+    };
 
-    return this.userReporitory.save(newUser);
+    return await this.usersRepository.create(hashedPwSignupInfo);
   }
 
-  async updateOne(id: number, payload: UpdateUserParams) {
-    return this.userReporitory.update({ id }, { ...payload });
-  }
-
-  async deleteUser(id: number) {
-    return this.userReporitory.delete({ id });
+  async deleteUser(id: string) {
+    return await this.usersRepository.delete(id);
   }
 }
